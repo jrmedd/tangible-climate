@@ -6,8 +6,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
 function App() {
-  const [departureAirport, setDepartureAirport] = useState(null);
-  const [arrivalAirport, setArrivalAirport] = useState(null);
+  const [origin, setOrigin] = useState(null);
+  const [destination, setDestination] = useState(null);
   const [results, setResults] = useState([]);
   const [roundTrip, setRoundTrip] = useState(false);
 
@@ -24,7 +24,7 @@ function App() {
 
   // Fetch airports when the component mounts
   useEffect(() => {
-    handleSearch('', 'departure'); // Fetch airports for departure ComboBox
+    handleSearch('', 'origin'); // Fetch airports for origin ComboBox
   }, []);
 
   const getCountryName = (iso) => {
@@ -32,21 +32,21 @@ function App() {
     return regionDisplayNames.of(iso);
   };
 
-  const handleDepartureChange = (event, value) => {
-    setDepartureAirport(value?.iata || null);
+  const handleOriginChange = (event, value) => {
+    setOrigin(value?.iata || null);
   };
 
-  const handleArrivalChange = (event, value) => {
-    setArrivalAirport(value?.iata || null);
+  const handleDestinationChange = (event, value) => {
+    setDestination(value?.iata || null);
   };
 
     // Inside your handleSubmit function
   const handleSubmit = async () => {
-    if (departureAirport && arrivalAirport) {
+    if (origin && destination) {
       try {
         const response = await axios.post('/api/estimate', {
-          departureAirport: departureAirport.toLowerCase(),
-          destinationAirport: arrivalAirport.toLowerCase(),
+          origin: origin,
+          destination: destination,
           isRoundTrip: roundTrip,
         });
 
@@ -73,13 +73,13 @@ function App() {
         getOptionLabel={(option) =>
           `${option.name} (${option.iata}) - ${getCountryName(option.iso)}`
         }
-        value={results.find((option) => option.iata === departureAirport) || null}
-        onChange={handleDepartureChange}
-        onInputChange={(_, newInputValue) => handleSearch(newInputValue, 'departure')}
+        value={results.find((option) => option.iata === origin) || null}
+        onChange={handleOriginChange}
+        onInputChange={(_, newInputValue) => handleSearch(newInputValue, 'origin')}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Departure Airport"
+            label="Origin airport"
             variant="outlined"
             fullWidth
             sx={{ maxWidth: '60ch', width: '100%' }}
@@ -95,13 +95,13 @@ function App() {
         getOptionLabel={(option) =>
           `${option.name} (${option.iata}) - ${getCountryName(option.iso)}`
         }
-        value={results.find((option) => option.iata === arrivalAirport) || null}
-        onChange={handleArrivalChange}
-        onInputChange={(_, newInputValue) => handleSearch(newInputValue, 'arrival')}
+        value={results.find((option) => option.iata === destination) || null}
+        onChange={handleDestinationChange}
+        onInputChange={(_, newInputValue) => handleSearch(newInputValue, 'destination')}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Arrival Airport"
+            label="Destination airport"
             variant="outlined"
             fullWidth
           />
