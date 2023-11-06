@@ -1,7 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const router = require('./routes/routes');
+const router = require('./routes/routes')
+const path = require('path');
+;
+
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'client/build/index.html')))
 
 // Middleware
 app.use(express.json());

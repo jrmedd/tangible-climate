@@ -52,9 +52,10 @@ router.post('/estimate', async (req, res) => {
     // Make the GET request to the GoClimate API
     const response = await axios.get('https://api.goclimate.com/v1/flight_footprint', config);
     // Return the result to the frontend
+    const footprint = response.data.footprint
 
-    const smartphonesCharged = kilogramsToSmartphones(response.data.footprint);
-    res.json({ smartphonesCharged });
+    const smartphonesCharged = kilogramsToSmartphones(footprint);
+    res.json({ smartphonesCharged, footprint});
 
   } catch (error) {
     //console.error(error);
@@ -78,7 +79,7 @@ router.get('/search', async (req, res) => {
     const airportsCollection = db.collection('airports');
 
     // Create a regex pattern that matches the search term as a whole word or term
-    const regexPattern = new RegExp(`\\b${searchTerm}\\b`, 'i');
+    const regexPattern = new RegExp(`\\b${searchTerm}.+`, 'i');
 
     const results = await airportsCollection
       .find({
