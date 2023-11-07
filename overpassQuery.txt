@@ -1,0 +1,1 @@
+https://overpass-api.de/api/interpreter?data=[out:json];area["ISO3166-1"="GB"]->.uk;rel(area.uk)["boundary"="administrative"][name="Manchester"];out geom;

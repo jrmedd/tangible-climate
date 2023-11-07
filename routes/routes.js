@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const axios = require('axios');
+const { config } = require('dotenv');
 
 // Function to calculate smartphones charged
 function poundsToSmartphones(poundsCO2) {
@@ -10,55 +11,57 @@ function poundsToSmartphones(poundsCO2) {
   return Math.round(smartphonesCharged);
 }
 
+function kilogramsToSmartphones(kgCO2) {
+  const poundsPerKilogram = 2.20462262185
+  const pounds = kgCO2 * poundsPerKilogram
+  return poundsToSmartphones(pounds)
+}
+
 // Route to estimate CO2 emissions and calculate smartphones charged
 router.post('/estimate', async (req, res) => {
   try {
-    // Extract departure and destination airports from the request body
-    const { departureAirport, destinationAirport, isRoundTrip } = req.body;
-
-    // Create the legs based on the selected airports
-    const legs = [{ departure_airport: departureAirport, destination_airport: destinationAirport }];
-
+    const { origin, destination, isRoundTrip } = req.body;
+    // Create an array of segments
+    const segments = [
+      { origin, destination },
+    ];
+    // If it's a round trip, add the return segment
     if (isRoundTrip) {
-      // Add the return leg for round trips
-      legs.push({ departure_airport: destinationAirport, destination_airport: departureAirport });
+      segments.push({ origin: destination, destination: origin });
     }
 
-    // Define the payload for Carbon Interface API
-    const carbonInterfacePayload = {
-      type: 'flight',
-      passengers: 1,
-      legs: legs,
+    // Prepare the x-www-form-urlencoded parameters
+    const params = {
+      'cabin_class': 'economy',
+      'currencies[]': ['USD']
     };
 
-    // Make a request to Carbon Interface API
-    // const carbonInterfaceResponse = await axios.post('https://www.carboninterface.com/api/v1/estimates', carbonInterfacePayload, {
-    //   headers: {
-    //     Authorization: `Bearer ${process.env.CARBON_INTERFACE_KEY}`, // Replace with your actual bearer token
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-    // // // Extract carbon_lb from the response
-    // const distance = carbonInterfaceResponse.data.data.attributes.distance_value;
-    // const carbonLb = carbonInterfaceResponse.data.data.attributes.carbon_lb;
-    // const carbonKg = carbonInterfaceResponse.data.data.attributes.carbon_kg;
+    // If there are multiple segments, add them to the params
+    for (let i = 0; i < segments.length; i++) {
+      params[`segments[${i}][origin]`] = segments[i].origin;
+      params[`segments[${i}][destination]`] = segments[i].destination;
+    }
 
-    // // Calculate smartphones charged using the provided function
-    
-    // // Return the result to the frontend
-    const distance = 1073.21
-    const carbonLb = 238.82
-    const carbonKg = 108.33
+    const config = {
+      params,
+      auth: {
+        username: process.env.GO_CLIMATE_KEY,
+        password: ''
+      }
+    }
+    // Make the GET request to the GoClimate API
+    const response = await axios.get('https://api.goclimate.com/v1/flight_footprint', config);
+    // Return the result to the frontend
+    const footprint = response.data.footprint
 
-    const smartphonesCharged = poundsToSmartphones(carbonLb);
-    res.json({ smartphonesCharged, distance, carbonLb, carbonKg, carbonInterfacePayload });
+    const smartphonesCharged = kilogramsToSmartphones(footprint);
+    res.json({ smartphonesCharged, footprint});
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    //console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-module.exports = router;
 
 
 router.get('/search', async (req, res) => {
@@ -76,7 +79,7 @@ router.get('/search', async (req, res) => {
     const airportsCollection = db.collection('airports');
 
     // Create a regex pattern that matches the search term as a whole word or term
-    const regexPattern = new RegExp(`\\b${searchTerm}\\b`, 'i');
+    const regexPattern = new RegExp(`\\b${searchTerm}.+`, 'i');
 
     const results = await airportsCollection
       .find({
