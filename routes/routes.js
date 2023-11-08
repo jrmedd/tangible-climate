@@ -75,7 +75,7 @@ router.get('/search', async (req, res) => {
     const client = await MongoClient.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
     });
-    const db = client.db();
+    const db = client.db('climate');
     const airportsCollection = db.collection('airports');
 
     // Create a regex pattern that matches the search term as a whole word or term
@@ -153,7 +153,7 @@ router.get('/cities/:population', async (req, res) => {
       .toArray();
 
     client.close();
-
+    closestCities.map(city => city.coveragePercentage = Math.round(city.coveragePercentage))
     res.json(closestCities);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred' });
