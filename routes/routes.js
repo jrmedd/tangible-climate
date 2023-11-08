@@ -89,7 +89,8 @@ router.get('/search', async (req, res) => {
         ],
       })
       .toArray();
-
+      
+    client.close();
     // Custom sorting logic
     results.sort((a, b) => {
       // First, check if there is a direct IATA code match
