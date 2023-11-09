@@ -8,6 +8,8 @@ import {Box, Button, Card, CardActions, CardContent, CardHeader, Chip, CircularP
 import { Flight, FlightLand, FlightTakeoff, HelpOutline } from '@mui/icons-material';
 import styled, { css } from 'styled-components';
 import { Stack } from '@mui/system';
+import TextTransition, { presets } from 'react-text-transition';
+
 import { useDebounce } from './useDebounce';
 import sources from './sources.json'
 
@@ -281,7 +283,7 @@ useEffect(() => {
             isRoundTrip={roundTrip}
             tripOrigin={originFullName}
             tripDestination={destinationFullName} />
-          <Equivalence variant={equivalences[displayedEquivalence]} smartphones={smartphonesCharged} estimatedFootPrint={footprint} city={population} />
+            <TextTransition springConfig={presets.gentle}><Equivalence variant={equivalences[displayedEquivalence]} smartphones={smartphonesCharged} estimatedFootPrint={footprint} city={population} /></TextTransition> 
         </CardContent>
         <CardActions sx={{justifyContent: 'space-between'}}>
           <Stack direction="row" spacing={2}>
