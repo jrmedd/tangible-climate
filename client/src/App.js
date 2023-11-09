@@ -69,7 +69,7 @@ width: 6rem;
 }
 `)
 
-const Statement = props => <ReadableParagraph>Your {props.isRoundTrip ? 'round trip' : 'trip'} from {props.tripOrigin} to {props.tripDestination} generates an <Link href={props.link}>estimated {props.estimatedFootPrint}kg</Link> of CO₂.</ReadableParagraph>
+const Statement = props => <ReadableParagraph>A {props.isRoundTrip ? 'round trip' : 'trip'} from {props.tripOrigin} to {props.tripDestination} generates an estimated <strong>{props.estimatedFootPrint}kg of CO₂</strong> emissions.</ReadableParagraph>
 
 
 const equivalences = ['lightbulbs', 'timeSmartphones', 'populationSmartphones', 'commutes']
@@ -82,7 +82,7 @@ const Equivalence = props => {
         equivalentText = `That's roughly equivalent to ${Math.round(props.city ? props.city.coveragePercentage : 0)}% of the population of ${props.city.city} charging their phones from empty to full at the same time.`
         break
         case 'timeSmartphones':
-          equivalentText = `That's roughly equivalent to charging fully charing your phone once a day for ${Math.round(props.smartphones / 365)} years.`
+          equivalentText = `That's roughly equivalent to fully charging your phone once a day for ${Math.round(props.smartphones / 365)} years.`
           break
     case 'lightbulbs':
       equivalentText = `That's roughly equivalent to leaving a lightbulb on constantly for ${Math.round((props.estimatedFootPrint / 0.076)/365)} years.`
@@ -112,6 +112,9 @@ const Sources = props => {
             <Link target="_blank" href={source.url}>{source.text} (opens in a new window)</Link>
           </ListItem>
         ))}
+        <ListItem>
+          <Link target="_blank" href="https://www.goclimate.com/blog/wp-content/uploads/2019/04/Calculations-in-GoClimateNeutral-Flight-Footprint-API.pdf">GoClimate carbon emissions estimates (opens in a new window)</Link>
+        </ListItem>
       </List>
     </CardContent>
   )
@@ -251,11 +254,20 @@ useEffect(() => {
       <Typography variant="h4" component='h1' gutterBottom>
         Environmental impact research
       </Typography>
+      <Typography variant="subtitle" component='h2'>
+        About
+      </Typography>
       <ReadableParagraph>
         This is a research tool designed to estimate the carbon emissions generated during air travel. Its goal is to help people understand the environmental impact of flying and consider ways to reduce carbon emissions associated with air travel.
       </ReadableParagraph>
       <ReadableParagraph>
         The carbon emission calculations are provided by <Link href="https://www.goclimate.com/">GoClimate (link opens in a new window)</Link>, based on calculation principles by <Link href="https://www.myclimate.org/en/information/about-myclimate/downloads/flight-emission-calculator/">myclimate (link opens in a new window)</Link>.
+      </ReadableParagraph>
+      <Typography variant="subtitle" component='h2'>
+        What to do
+      </Typography>
+      <ReadableParagraph>
+        Use the search boxes below to find a departure and arrival airport. You might consider entering the last flight you took. If you have trouble finding an airport, try typing the three-letter code for the airport e.g. "LHR" for Heathrow, or "AMS" for Amsterdam Schipol. When you have your result, you can use the "What else?" button to find out even more.
       </ReadableParagraph>
       <StyledSection isVisible={resultsVisible}>
         <Card>
@@ -265,7 +277,6 @@ useEffect(() => {
           />
         <CardContent>
           <Statement
-            link="https://www.goclimate.com/blog/wp-content/uploads/2019/04/Calculations-in-GoClimateNeutral-Flight-Footprint-API.pdf"
             estimatedFootPrint={footprint}
             isRoundTrip={roundTrip}
             tripOrigin={originFullName}

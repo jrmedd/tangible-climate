@@ -38,7 +38,7 @@
       ]
     },
     "commutes": {
-      "summary": "This calculation estimates the carbon emissions from daily commutes, assuming an approximate calculation of 2.3kg CO₂e per liter of petrol (based on the combustion of hydrocarbons), an average car fuel consumption of 11.5 miles per liter from GOV.UK data, and an ONS data-supported average commute distance of 7 miles in the UK.",
+      "summary": "This calculation estimates the carbon emissions from daily commutes, assuming an approximate calculation of 2.3kg CO₂e per litre of petrol (based on the combustion of hydrocarbons), an average car fuel consumption of 11.5 miles per litre from GOV.UK data, and an ONS data-supported average commute distance of 7 miles in the UK.",
       "calculation": "2.3kg ÷ 11.5 miles = 0.2kg CO₂e/mile \n\r0.2kg x 7 (miles per commute) = 1.4kg/commute",
       "sources": [
         {
