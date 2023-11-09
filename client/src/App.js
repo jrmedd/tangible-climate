@@ -16,7 +16,8 @@ width: 100%;
 display: flex;
 flex-flow: column;
 align-items: center;
-margin: 1rem 0;
+box-sizing: border-box;
+padding: 1rem;
 `)
 
 const ReadableParagraph = styled.p(props => css`
@@ -40,14 +41,14 @@ transition-property: all;
 transition-duration: 0.4s;
 transition-timing-function: ease;
 transition-delay: 0s;
-width: 60ch;
+width: 65ch;
 max-width: 95%;
 margin: 1rem 0;
 `)
 
 
 const StyledForm = styled.form(props => css`
-width: 70ch;
+width: 65ch;
 max-width: 95%;
 display: flex;
 flex-flow: column;
@@ -273,8 +274,8 @@ useEffect(() => {
         </CardContent>
         <CardActions sx={{justifyContent: 'space-between'}}>
           <Stack direction="row" spacing={2}>
-            <Button onClick={resetForm} size="small">Search again</Button>
-            <Button onClick={() => setDisplayedEquivalence((displayedEquivalence + 1) % equivalences.length)} size="small">What else?</Button>
+            <Button onClick={resetForm} variant="outlined" size="small">Search again</Button>
+            <Button onClick={() => setDisplayedEquivalence((displayedEquivalence + 1) % equivalences.length)} variant="contained" size="small">What else?</Button>
           </Stack>
           <IconButton onClick={() => setCalculationsExpanded(!calculationsExpanded)} aria-label="calculations">
             <HelpOutline />
@@ -289,7 +290,7 @@ useEffect(() => {
         <Autocomplete
           sx={{ width: '100%' }}
           options={results}
-          noOptionsText="Start typing to find an aiport"
+          noOptionsText="Start typing to find an airport"
           getOptionLabel={(option) => `${option.name} (${option.iata}) - ${getCountryName(option.iso)}`}
           value={results.find((option) => option.iata === origin) || null}
           onChange={handleOriginChange}
@@ -337,7 +338,7 @@ useEffect(() => {
         <Autocomplete
           sx={{ width: '100%' }}
           options={results}
-          noOptionsText="Start typing to find an aiport"
+          noOptionsText="Start typing to find an airport"
           getOptionLabel={(option) => `${option.name} (${option.iata}) - ${getCountryName(option.iso)}`}
           value={results.find((option) => option.iata === destination) || null}
           onChange={handleDestinationChange}
