@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import axiosThrottle from 'axios-request-throttle';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -9,9 +8,8 @@ import {Box, Button, Card, CardActions, CardContent, CardHeader, Chip, CircularP
 import { Flight, FlightLand, FlightTakeoff, HelpOutline } from '@mui/icons-material';
 import styled, { css } from 'styled-components';
 import { Stack } from '@mui/system';
+import { useDebounce } from './useDebounce';
 import sources from './sources.json'
-
-axiosThrottle.use(axios, { requestsPerSecond: 1 });
 
 const StyledMain = styled.main(props => css`
 width: 100%;
@@ -138,20 +136,29 @@ function App() {
   const [population, setPopulation] = useState(null)
   const [calculationsExpanded, setCalculationsExpanded] = useState(false)
 
+  const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
+
   function resetForm () {
     setLoadingEmissions(false)
     setFormVisible(true)
     setResultsVisible(false)
   } 
 
-  const handleSearch = async (searchTerm, comboBox) => {
+  const handleSearch = (newSearchTerm, comboBox) => {
+    if (newSearchTerm !== '') {
+      setSearchTerm(newSearchTerm)
+      if (comboBox === 'origin') setOrigin(null)
+      if (comboBox === 'destination') setDestination(null)
+    }
+  };
+
+  const debouncedSearch = async term => {
     try {
-      if (searchTerm !== '') {
-        if (comboBox === 'origin') setOrigin(null)
-        if (comboBox === 'destination') setDestination(null)
+      if (term !== '') {
         setFindingAirports(true)
-        const response = await axios.get(`/api/search?q=${searchTerm}`);
-        setResults(response.data.results.map((result, index) => ({...result, id: index})));
+        const response = await axios.get(`/api/search?q=${term}`);
+        setResults(response.data.results.map((result, index) => ({ ...result, id: index })));
         setFindingAirports(false)
       }
     } catch (error) {
@@ -159,6 +166,11 @@ function App() {
       console.error(error);
     }
   };
+
+
+useEffect(() => {
+  debouncedSearch(debouncedSearchTerm)
+}, [debouncedSearchTerm])
 
   useEffect(() => {
     if (population !== null) {
@@ -232,7 +244,7 @@ function App() {
         console.error(error);
       }
     }
-  };
+  }
   return (
     <StyledMain>
       <Typography variant="h4" component='h1' gutterBottom>
