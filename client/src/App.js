@@ -79,16 +79,16 @@ const Equivalence = props => {
   switch (props.variant) {
     case 'populationSmartphones':
       default:
-        equivalentText = `That's roughly equivalent to ${Math.round(props.city ? props.city.coveragePercentage : 0)}% of the population of ${props.city.city} charging their phones to full at at the same time.`
+        equivalentText = `That's roughly equivalent to ${Math.round(props.city ? props.city.coveragePercentage : 0)}% of the population of ${props.city.city} charging their phones from empty to full at the same time.`
         break
         case 'timeSmartphones':
           equivalentText = `That's roughly equivalent to charging fully charing your phone once a day for ${Math.round(props.smartphones / 365)} years.`
           break
     case 'lightbulbs':
-      equivalentText = `That's roughly equivalent to leaving a lightbulb on all day for ${Math.round((props.estimatedFootPrint / 0.076)/365)} years.`
+      equivalentText = `That's roughly equivalent to leaving a lightbulb on constantly for ${Math.round((props.estimatedFootPrint / 0.076)/365)} years.`
       break
     case 'commutes':
-      equivalentText = `That's roughly equivalent of ${Math.round(props.estimatedFootPrint / 1.4)} people driving to work in the UK.`
+      equivalentText = `That's roughly equivalent to ${Math.round(props.estimatedFootPrint / 1.4)} people driving to work in the UK.`
       break
   }
   return (<ReadableParagraph>{ equivalentText }</ReadableParagraph>)
